@@ -1,22 +1,19 @@
 [package]
 name = "rocprobe"
-version = "0.3.1"
+version = "0.1.0"
 edition = "2021"
-authors = ["Huang Poi <huangpoi@protonmail.com>"]
-description = "Lightweight ROCm GPU profiler CLI for MI300X"
+description = "Lightweight ROCm GPU profiler for kernel timing, occupancy, and memory bandwidth"
 license = "MIT"
-repository = "https://github.com/huang-poi/rocprobe"
-keywords = ["rocm", "gpu", "profiler", "amd", "mi300x"]
 
 [dependencies]
 clap = { version = "4.4", features = ["derive"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-colored = "2.0"
+csv = "1.3"
 anyhow = "1.0"
 chrono = "0.4"
-libc = "0.2"
+colored = "2.0"
 
-[features]
-default = []
-gpu-tests = []
+[dev-dependencies]
+tempfile = "3.8"
+assert_cmd = "2.0"
