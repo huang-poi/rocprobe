@@ -1,242 +1,126 @@
-# 🔍 ROCProbe
+# 🔍 rocprobe
 
-> A lightweight, high-performance GPU profiler CLI for AMD ROCm on MI300X accelerators
+**Lightweight ROCm GPU profiler CLI for MI300X**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![ROCm](https://img.shields.io/badge/ROCm-7.x-blue.svg)](https://rocm.docs.amd.com/)
 [![Rust](https://img.shields.io/badge/Rust-1.75+-orange.svg)](https://www.rust-lang.org/)
-[![ROCm](https://img.shields.io/badge/ROCm-6.0+-red.svg)](https://rocm.docs.amd.com/)
-[![MI300X](https://img.shields.io/badge/MI300X-Supported-green.svg)](https://www.amd.com/en/products/accelerators/instinct/mi300/mi300x.html)
-[![CI](https://img.shields.io/github/actions/workflow/status/huang-poi/rocprobe/ci.yml?branch=main)](https://github.com/huang-poi/rocprobe/actions)
-[![Crates.io](https://img.shields.io/crates/v/rocprobe.svg)](https://crates.io/crates/rocprobe)
 
----
+`rocprobe` is a lightweight command-line GPU profiler built for AMD Instinct MI300X accelerators. It provides real-time kernel execution metrics, memory bandwidth utilization, and compute occupancy analysis — without the overhead of full profiling suites like rocprof.
 
-**ROCProbe** is a zero-overhead command-line profiler for AMD Instinct MI300X GPUs, built in Rust for speed and safety. It hooks into the ROCm runtime to capture kernel execution times, memory bandwidth utilization, occupancy metrics, and wavefront activity — all from your terminal.
+## Why?
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                      ROCProbe                          │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│  ┌──────────┐   ┌──────────┐   ┌──────────────────┐   │
-│  │ CLI      │──▶│ Profiler │──▶│ Metric Collector │   │
-│  │ (clap)   │   │ Core     │   │ (rocprofiler)    │   │
-│  └──────────┘   └──────────┘   └──────────────────┘   │
-│       │              │                  │                │
-│       ▼              ▼                  ▼                │
-│  ┌──────────┐   ┌──────────┐   ┌──────────────────┐   │
-│  │ Output   │◀──│ HSA      │◀──│ HIP Runtime      │   │
-│  │ Formatter│   │ Runtime  │   │ Interceptor      │   │
-│  └──────────┘   └──────────┘   └──────────────────┘   │
-│                       │                                 │
-│                       ▼                                 │
-│              ┌────────────────┐                        │
-│              │ MI300X GPU     │                        │
-│              │ (gfx942)       │                        │
-│              └────────────────┘                        │
-│                                                         │
-└─────────────────────────────────────────────────────────┘
-```
+- **Fast**: Sub-second profiling with near-zero overhead
+- **Focused**: Only the metrics that matter for MI300X optimization
+- **Scriptable**: JSON output for CI/CD pipelines and automated tuning
+- **ROCm-native**: Built directly on HIP/ROCm APIs, no abstraction layers
 
-## ✨ Features
-
-- **Kernel Profiling** — Per-kernel execution time, occupancy, and wavefront counts
-- **Memory Analysis** — HBM bandwidth utilization, copy engine throughput, memory pressure detection
-- **Occupancy Metrics** — Wavefront occupancy, SIMD utilization, register pressure analysis
-- **Real-time Streaming** — Live profiling output as kernels execute
-- **Python Bindings** — Import `rocprobe` in Python for integration into ML training loops
-- **JSON/CSV Export** — Machine-readable output for CI/CD pipelines and dashboards
-- **Low Overhead** — <1% performance impact on profiled workloads
-
-## 📦 Installation
-
-### From Source (Recommended)
+## Quick Start
 
 ```bash
-# Clone the repository
-git clone https://github.com/huang-poi/rocprobe.git
-cd rocprobe
-
-# Build with release optimizations
-cargo build --release
-
-# Install to PATH
+# Install from source
 cargo install --path .
+
+# Profile a single kernel launch
+rocprobe profile --target ./my_app --format table
+
+# Stream metrics in real-time
+rocprobe monitor --interval 500ms --gpu 0
+
+# Export for analysis
+rocprobe profile --target ./my_app --format json > report.json
 ```
 
-### Pre-built Binary
-
-```bash
-# Download the latest release
-curl -sSL https://github.com/huang-poi/rocprobe/releases/latest/download/rocprobe-linux-x64 -o /usr/local/bin/rocprobe
-chmod +x /usr/local/bin/rocprobe
-```
-
-### Python Package
-
-```bash
-pip install rocprobe
-```
-
-### Prerequisites
-
-- **ROCm 6.0+** installed and configured
-- **Rust 1.75+** toolchain (for building from source)
-- **AMD Instinct MI300X** or compatible accelerator (gfx90a/gfx942)
-
-## 🚀 Usage
-
-### Basic Profiling
-
-```bash
-# Profile a HIP application
-rocprofile ./my_hip_app
-
-# Profile with specific metrics
-rocprofile --metrics kernel_time,occupancy,bandwidth ./my_hip_app
-
-# Stream real-time metrics
-rocprofile --stream --interval 100 ./my_hip_app
-```
-
-### Example Output
+## Architecture
 
 ```
-╔══════════════════════════════════════════════════════════════════╗
-║                    ROCProbe v0.3.1 — Profiling Results          ║
-╠══════════════════════════════════════════════════════════════════╣
-║ Device: AMD Instinct MI300X | GFX: gfx942 | CU: 304            ║
-║ Session: 12.847s | Kernels: 1,247 | Total Time: 11.203s         ║
-╠══════════════════════════════════════════════════════════════════╣
-║                                                                  ║
-║  KERNEL EXECUTION TIMELINE                                       ║
-║  ─────────────────────────────────────────────────────────────── ║
-║  matmul_forward    ████████████████████████░░░░  72.3%  8.102s  ║
-║  layernorm_fwd     ████████░░░░░░░░░░░░░░░░░░  14.2%  1.591s  ║
-║  attention_fwd     ████░░░░░░░░░░░░░░░░░░░░░░   8.1%  0.907s  ║
-║  residual_add      █░░░░░░░░░░░░░░░░░░░░░░░░░   3.2%  0.358s  ║
-║  other (98)        █░░░░░░░░░░░░░░░░░░░░░░░░░   2.2%  0.245s  ║
-║                                                                  ║
-║  MEMORY BANDWIDTH                                                ║
-║  ─────────────────────────────────────────────────────────────── ║
-║  HBM Read:     2,847.3 GB/s  (92.1% of peak)                   ║
-║  HBM Write:    1,203.8 GB/s  (78.4% of peak)                   ║
-║  Total:        4,051.1 GB/s                                      ║
-║                                                                  ║
-║  OCCUPANCY                                                       ║
-║  ─────────────────────────────────────────────────────────────── ║
-║  Active Waves: 1,824 / 2,432  (75.0%)                          ║
-║  Avg Occupancy: 68.4%                                            ║
-║  Register Pressure: Moderate (48 avg VGPRs)                      ║
-║                                                                  ║
-╚══════════════════════════════════════════════════════════════════╝
+┌─────────────────────────────────────────────┐
+│              rocprobe CLI                    │
+├──────────┬──────────┬───────────────────────┤
+│ profile  │ monitor  │ analyze               │
+├──────────┴──────────┴───────────────────────┤
+│          ROCm Metrics Collector             │
+│  ┌─────────┐ ┌──────────┐ ┌──────────────┐ │
+│  │ HIP API │ │ rocprof  │ │ sysfs reader │ │
+│  │ hooks   │ │ events   │ │ (power/temp) │ │
+│  └─────────┘ └──────────┘ └──────────────┘ │
+├─────────────────────────────────────────────┤
+│         AMD GPU Driver (amdgpu)             │
+│            MI300X VF (gfx942)               │
+└─────────────────────────────────────────────┘
 ```
 
-### Python Integration
+## Metrics Captured
+
+| Metric | Description | Unit |
+|--------|-------------|------|
+| `kernel_time` | Kernel execution duration | μs |
+| `mem_bw_util` | Memory bandwidth utilization | % |
+| `compute_occ` | Compute unit occupancy | % |
+| `l2_cache_hit` | L2 cache hit rate | % |
+| `vgpr_usage` | VGPR allocation per CU | count |
+| `wavefront_active` | Active wavefronts per SIMD | count |
+| `power_draw` | GPU power consumption | W |
+| `temp_edge` | Edge temperature | °C |
+
+## Example Output
+
+```
+╔═══════════════════════════════════════════════════════════╗
+║                    rocprobe v0.3.1                        ║
+║          GPU 0: AMD Instinct MI300X VF (gfx942)          ║
+╠═══════════════════╦═══════════╦═══════════╦═══════════════╣
+║ Kernel            ║ Time (μs) ║ Mem BW %  ║ Occupancy %   ║
+╠═══════════════════╬═══════════╬═══════════╬═══════════════╣
+║ gemm_16384x16384  ║    1,247  ║     87.3  ║         94.1  ║
+║ softmax_fwd       ║       89  ║     62.1  ║         78.5  ║
+║ reduce_sum        ║       12  ║     45.8  ║         56.2  ║
+║ conv2d_nhwc       ║      341  ║     91.7  ║         88.9  ║
+╚═══════════════════╩═══════════╩═══════════╩═══════════════╝
+
+Summary: 4 kernels | 1,689 μs total | 71.7% avg bandwidth util
+```
+
+## Python Bindings
 
 ```python
 from rocprobe import Profiler
 
-# Profile a function
-profiler = Profiler(device=0)
+p = Profiler(gpu_id=0)
+report = p.profile("./my_app")
 
-@profiler.profile
-def train_step(batch):
-    logits = model(batch)
-    loss = loss_fn(logits, targets)
-    loss.backward()
-    return loss
+for kernel in report.kernels:
+    print(f"{kernel.name}: {kernel.time_us}μs, {kernel.mem_bw_util}% bw")
 
-# Run profiling
-result = train_step(batch)
-print(result.summary())
-# => "train_step: 12.4ms avg, 84% occupancy, 2.1TB/s HBM bandwidth"
+print(f"Total: {report.total_time_us}μs")
 ```
 
-### JSON Export
+## Building
 
 ```bash
-# Export to JSON for CI/CD
-rocprofile --output results.json --format json ./my_app
+# Prerequisites: ROCm 7.x, Rust 1.75+
+git clone https://github.com/huang-poi/rocprobe.git
+cd rocprobe
+cargo build --release
 
-# Export to CSV
-rocprofile --output results.csv --format csv ./my_app
+# Run tests (requires MI300X or compatible GPU)
+cargo test --features gpu-tests
 ```
 
-## 🏗️ Architecture
+## Roadmap
 
-ROCProbe uses a layered architecture for minimal overhead and maximum flexibility:
+- [x] Basic kernel profiling (HIP API)
+- [x] Real-time monitoring mode
+- [x] JSON export
+- [ ] rocprofiler-SDK integration (ROCm 7.2+)
+- [ ] Multi-GPU support
+- [ ] Flame graph generation
+- [ ] CI/CD regression detection
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                         User Space                              │
-├─────────────┬───────────────────┬───────────────────────────────┤
-│  rocprofile │  rocprobe (lib)   │  Python bindings              │
-│  (CLI)      │                   │  (PyO3)                       │
-├─────────────┴───────────────────┴───────────────────────────────┤
-│                     Profiler Core (Rust)                        │
-│  ┌──────────────┐ ┌──────────────┐ ┌────────────────────────┐  │
-│  │ Metric       │ │ Session      │ │ Output                  │  │
-│  │ Collector    │ │ Manager      │ │ Formatter               │  │
-│  └──────┬───────┘ └──────┬───────┘ └────────────┬───────────┘  │
-├─────────┼────────────────┼──────────────────────┼───────────────┤
-│                     ROCm Runtime Layer                          │
-│  ┌──────────────┐ ┌──────────────┐ ┌────────────────────────┐  │
-│  │ rocprofiler   │ │ HIP Runtime  │ │ HSA Runtime            │  │
-│  │ (counters)    │ │ (intercept)  │ │ (memory/disp)          │  │
-│  └──────┬───────┘ └──────┬───────┘ └────────────┬───────────┘  │
-├─────────┴────────────────┴──────────────────────┴───────────────┤
-│                      Hardware Layer                             │
-│  ┌──────────────────────────────────────────────────────────┐   │
-│  │  AMD Instinct MI300X (gfx942)                           │   │
-│  │  • 304 Compute Units  • 192 GB HBM3                     │   │
-│  │  • 5.3 TB/s Bandwidth • 1,530 TFLOPS FP16              │   │
-│  └──────────────────────────────────────────────────────────┘   │
-└─────────────────────────────────────────────────────────────────┘
-```
+## Contributing
 
-## 📊 Supported Metrics
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-| Category | Metrics | Source |
-|----------|---------|--------|
-| **Kernel** | Execution time, launch params, grid/block dims | HIP Runtime |
-| **Occupancy** | Wavefront count, SIMD utilization, occupancy % | rocprofiler |
-| **Memory** | HBM read/write BW, L2 cache hit rate, DRAM utilization | HSA/counters |
-| **Compute** | FP16/FP32/FP64 TFLOPS, INT8 TOPS, FMA utilization | PM4/counters |
-| **Power** | GPU power, junction temp, memory temp | SMI integration |
+## License
 
-## 🗺️ Roadmap
-
-- [x] v0.1.0 — Basic kernel profiling and CLI
-- [x] v0.2.0 — Memory bandwidth metrics
-- [x] v0.3.0 — Python bindings and JSON export
-- [ ] v0.4.0 — Multi-GPU profiling support
-- [ ] v0.5.0 — Web dashboard for visualization
-- [ ] v0.6.0 — MI300A (APU) support
-
-## 🤝 Contributing
-
-Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [AMD ROCm](https://rocm.docs.amd.com/) — Runtime and profiling infrastructure
-- [rocprofiler](https://github.com/ROCm/rocprofiler) — Hardware counter access
-- [HSA-Runtime](https://github.com/ROCm/hsa-runtime) — HSA agent management
-- Built with ❤️ for the MI300X community
-
----
-
-<p align="center">
-  <i>Built for AMD Instinct MI300X • Powered by Rust • Open Source</i>
-</p>
+MIT — see [LICENSE](LICENSE).

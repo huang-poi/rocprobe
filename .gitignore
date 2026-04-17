@@ -1,33 +1,11 @@
-# Build artifacts
-/target/
-*.d
-*.o
+/target
 *.so
 *.dylib
-*.dll
-
-# Python
+*.d
 __pycache__/
-*.py[cod]
-*$py.class
+*.pyc
 *.egg-info/
 dist/
 build/
-.eggs/
-
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db
-
-# ROCprobe specific
-*.prof
-*.rocprof
-results.json
-results.csv
+.venv/
+*.log

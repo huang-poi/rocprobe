@@ -1,45 +1,44 @@
-# Contributing to ROCProbe
+# Contributing to rocprobe
 
-Thank you for your interest in contributing to ROCProbe! This document provides guidelines for contributing to this project.
+Thanks for your interest in contributing!
 
 ## Development Setup
 
 ```bash
-# Clone the repository
 git clone https://github.com/huang-poi/rocprobe.git
 cd rocprobe
-
-# Build
 cargo build
-
-# Run tests
 cargo test
+```
 
-# Run with verbose logging
-RUST_LOG=debug cargo run -- devices
+## Running Tests
+
+Unit tests (no GPU required):
+```bash
+cargo test
+```
+
+Integration tests (requires MI300X):
+```bash
+cargo test --features gpu-tests
 ```
 
 ## Code Style
 
-- Follow standard Rust conventions (rustfmt + clippy)
-- Use descriptive variable names
-- Add doc comments for public APIs
-- Keep functions focused and small
+- Rust: `cargo fmt` + `cargo clippy`
+- Python: `black` + `ruff`
 
-## Submitting Changes
+## Pull Requests
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+1. Fork the repo
+2. Create a feature branch
+3. Add tests for new functionality
+4. Ensure CI passes
+5. Submit PR with clear description
 
 ## Reporting Issues
 
-- Use the GitHub issue tracker
-- Include ROCm version, GPU model, and OS
-- Provide minimal reproduction steps
-
-## License
-
-By contributing, you agree that your contributions will be licensed under the MIT License.
+Please include:
+- ROCm version (`cat /opt/rocm/.info/version`)
+- GPU model (`rocm-smi --showproductname`)
+- Minimal reproduction steps
