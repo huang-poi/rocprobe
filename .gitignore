@@ -1,11 +1,4 @@
 /target
-*.so
-*.dylib
-*.d
-__pycache__/
-*.pyc
-*.egg-info/
-dist/
-build/
-.venv/
-*.log
+*.prof
+*.trace
+.DS_Store
