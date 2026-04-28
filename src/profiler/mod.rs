@@ -37,3 +37,5 @@ pub fn run(app: &str, format: &str, duration: u64) -> Result<()> {
     println!("Finished in {:.2}s", elapsed.as_secs_f64());
     Ok(())
 }
+
+// refactor(profiler): extract kernel parsing
