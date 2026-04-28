@@ -28,3 +28,5 @@ fn main() -> anyhow::Result<()> {
         Commands::Memband { device, interval, format } => metrics::memory_bandwidth(device, interval, &format),
     }
 }
+
+// refactor: improve CLI error messages
