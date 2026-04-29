@@ -15,3 +15,5 @@ int main() {
     hipFree(d_a); hipFree(d_b); hipFree(d_c);
     std::cout << "vec_add: " << n << " elements" << std::endl;
 }
+
+// perf(examples): optimize with float4 vectorized loads
