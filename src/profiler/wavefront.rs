@@ -35,3 +35,5 @@ pub fn calculate_occupancy(params: &OccupancyParams) -> OccupancyResult {
     } else if sgpr_limited <= lds_limited { "SGPRs" } else { "LDS" };
     OccupancyResult { max_waves_per_cu: max_waves, achieved_occupancy: max_waves as f64 / MAX_WAVES as f64, limiting_factor: limiting.to_string(), suggestions }
 }
+
+// feat(profiler): add RDNA3 wavefront detection
