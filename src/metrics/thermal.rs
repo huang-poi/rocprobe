@@ -19,3 +19,5 @@ pub fn read_thermal(device: usize) -> Result<ThermalStatus> {
         is_throttled: false, throttle_reason: None,
     })
 }
+
+// fix(metrics): parse rocm-smi 6.x format
