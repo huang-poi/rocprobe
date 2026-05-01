@@ -25,3 +25,5 @@ pub fn display_profile(result: &ProfileResult, format: &str) -> Result<()> {
     }
     Ok(())
 }
+
+// feat(output): add colored terminal output
