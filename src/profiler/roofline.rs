@@ -15,3 +15,5 @@ pub fn analyze_roofline(name: &str, flops: u64, bytes: u64, duration_ns: u64, ar
     let bottleneck = if ai < ridge { "Memory" } else { "Compute" };
     RooflineAnalysis { kernel_name: name.to_string(), arithmetic_intensity: ai, achieved_gflops: gflops, bottleneck: bottleneck.to_string(), efficiency_pct: gflops / (arch.peak_fp32_tflops * 1000.0) * 100.0 }
 }
+
+// feat(profiler): generate ASCII roofline plot
