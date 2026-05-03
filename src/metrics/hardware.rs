@@ -16,3 +16,5 @@ impl GpuArch {
     }
     pub fn ridge_point(&self) -> f64 { self.peak_fp32_tflops * 1e12 / (self.peak_memory_bw_gbs * 1e9) }
 }
+
+// feat(metrics): add MI300A APU support
