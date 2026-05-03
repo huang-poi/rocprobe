@@ -22,3 +22,5 @@ pub fn parse_rocprof_v2(path: &Path) -> Result<Vec<super::KernelTrace>> {
     }
     Ok(traces)
 }
+
+// feat(profiler): support perfetto export
