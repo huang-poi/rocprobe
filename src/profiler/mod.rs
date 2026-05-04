@@ -39,3 +39,5 @@ pub fn run(app: &str, format: &str, duration: u64) -> Result<()> {
 }
 
 // refactor(profiler): extract kernel parsing
+
+// refactor(profiler): add async profiling with tokio
