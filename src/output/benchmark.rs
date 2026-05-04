@@ -14,3 +14,5 @@ pub fn compare_benchmarks(baseline: &[BenchmarkResult], current: &[BenchmarkResu
         }
     }
 }
+
+// feat(output): add markdown report generator
