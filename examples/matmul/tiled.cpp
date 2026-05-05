@@ -13,3 +13,5 @@ __global__ void matmul_tiled(const float* A, const float* B, float* C, int M, in
     }
     if (row < M && col < N) C[row*N+col] = sum;
 }
+
+// perf(examples): add shared memory padding
