@@ -43,3 +43,5 @@ pub fn memory_bandwidth(device: usize, interval: u64, format: &str) -> Result<()
 }
 
 // fix(metrics): handle rocm-smi not found gracefully
+
+// feat(metrics): add PCIe bandwidth monitoring
