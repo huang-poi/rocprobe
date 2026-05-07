@@ -26,3 +26,5 @@ rocprobe memband --device 0 --interval 200
 
 ## License
 MIT
+
+// docs: update README with v0.2.0 features
