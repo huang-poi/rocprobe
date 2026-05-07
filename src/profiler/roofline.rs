@@ -17,3 +17,5 @@ pub fn analyze_roofline(name: &str, flops: u64, bytes: u64, duration_ns: u64, ar
 }
 
 // feat(profiler): generate ASCII roofline plot
+
+// feat(profiler): add SVG roofline export
