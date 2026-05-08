@@ -30,3 +30,5 @@ fn main() -> anyhow::Result<()> {
 }
 
 // refactor: improve CLI error messages
+
+// feat: add batch profiling mode
