@@ -37,3 +37,5 @@ pub fn calculate_occupancy(params: &OccupancyParams) -> OccupancyResult {
 }
 
 // feat(profiler): add RDNA3 wavefront detection
+
+// feat(profiler): add workgroup auto-tuning
