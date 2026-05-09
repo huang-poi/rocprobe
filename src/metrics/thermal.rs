@@ -21,3 +21,5 @@ pub fn read_thermal(device: usize) -> Result<ThermalStatus> {
 }
 
 // fix(metrics): parse rocm-smi 6.x format
+
+// feat(metrics): add power efficiency GFLOPS/W
