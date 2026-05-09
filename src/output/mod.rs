@@ -27,3 +27,5 @@ pub fn display_profile(result: &ProfileResult, format: &str) -> Result<()> {
 }
 
 // feat(output): add colored terminal output
+
+// feat(output): add flamegraph trace output
