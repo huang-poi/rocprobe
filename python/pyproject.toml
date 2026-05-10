@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "rocprobe"
+version = "0.1.0"
+description = "Lightweight ROCm GPU profiler CLI"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["rocprobe*"]
