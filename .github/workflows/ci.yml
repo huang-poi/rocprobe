@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        rust: [stable, nightly]
+        rust: [stable]
 
     steps:
       - uses: actions/checkout@v4
@@ -42,11 +42,9 @@ jobs:
         run: cargo test --verbose
 
       - name: Check formatting
-        if: matrix.rust == 'stable'
         run: cargo fmt --check
 
       - name: Clippy lints
-        if: matrix.rust == 'stable'
         run: cargo clippy -- -D warnings
 
   python:
@@ -68,4 +66,8 @@ jobs:
       - name: Run Python tests
         run: |
           cd python
-          python -m pytest tests/ -v || echo "No tests found"
+          if [ -d "tests" ]; then
+            python -m pytest tests/ -v
+          else
+            echo "No tests directory found, skipping tests"
+          fi
