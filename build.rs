@@ -1,7 +1,6 @@
 /// ROCProbe build script
 ///
 /// Detects ROCm installation and sets up linking for native libraries.
-
 use std::env;
 use std::path::PathBuf;
 
@@ -14,9 +13,7 @@ fn main() {
         "/usr/local/rocm",
     ];
 
-    let rocm_path = rocm_paths.iter().find(|p| {
-        std::path::Path::new(p).exists()
-    });
+    let rocm_path = rocm_paths.iter().find(|p| std::path::Path::new(p).exists());
 
     if let Some(path) = rocm_path {
         println!("cargo:rustc-link-search=native={}/lib", path);

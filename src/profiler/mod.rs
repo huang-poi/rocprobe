@@ -32,7 +32,10 @@ pub fn run(app: &str, format: &str, duration: u64) -> Result<()> {
     println!("Profiling {} for {}s...", app, duration);
     std::env::set_var("HIP_PROFILE_API", "1");
     let start = Instant::now();
-    let output = Command::new(app).env("HIP_PROFILE_API", "1").output().context("Failed to launch")?;
+    let output = Command::new(app)
+        .env("HIP_PROFILE_API", "1")
+        .output()
+        .context("Failed to launch")?;
     let elapsed = start.elapsed();
     println!("Finished in {:.2}s", elapsed.as_secs_f64());
     Ok(())
