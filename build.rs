@@ -1,7 +1,6 @@
 /// ROCProbe build script
 ///
 /// Detects ROCm installation and sets up linking for native libraries.
-
 fn main() {
     // Try to find ROCm installation
     let rocm_paths = [
