@@ -1,8 +1,6 @@
 /// ROCProbe build script
 ///
 /// Detects ROCm installation and sets up linking for native libraries.
-use std::env;
-use std::path::PathBuf;
 
 fn main() {
     // Try to find ROCm installation
