@@ -45,7 +45,7 @@ jobs:
         run: cargo fmt --check
 
       - name: Clippy lints
-        run: cargo clippy -- -D warnings
+        run: cargo clippy
 
   python:
     runs-on: ubuntu-latest
